@@ -87,7 +87,9 @@ uploaded_file = st.sidebar.file_uploader(
 )
 
 if uploaded_file:
-    df_new = pd.read_excel(uploaded_file, engine="openpyxl", dtype=str)
+
+    df_new = pd.read_excel(uploaded_file, engine="openpyxl")
+
     df_new = map_columns(df_new)
     df_new = clean_data(df_new)
 
@@ -96,7 +98,7 @@ if uploaded_file:
         con=engine,
         if_exists="append",
         index=False,
-        method="multi"
+        chunksize=200
     )
 
     st.sidebar.success("✅ New data inserted into database!")
