@@ -115,13 +115,6 @@ if df.empty:
 
 df["date"] = pd.to_datetime(df["date"])
 
-# ✅ FIX: Convert all numeric columns (they may be read as strings from DB)
-df["revenue"]   = pd.to_numeric(df["revenue"],   errors="coerce").fillna(0)
-df["cost"]      = pd.to_numeric(df["cost"],      errors="coerce").fillna(0)
-df["clicks"]    = pd.to_numeric(df["clicks"],    errors="coerce").fillna(0)
-df["converted"] = pd.to_numeric(df["converted"], errors="coerce").fillna(0)
-df["roi"]       = pd.to_numeric(df["roi"],       errors="coerce").fillna(0)
-
 # =========================================================
 # ---------------- SIDEBAR FILTERS ----------------
 # =========================================================
