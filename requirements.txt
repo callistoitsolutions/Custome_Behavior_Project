@@ -2,7 +2,8 @@ numpy
 pandas
 sqlalchemy
 mysql-connector-python
-streamlit
+streamlit>=1.30
+altair<5
 openpyxl
-jupyter
 scikit-learn
+joblib
