@@ -63,12 +63,49 @@ st.markdown("""
     border-bottom: 1px solid var(--border);
 }
 
-/* ── Sidebar ── */
+/* ════════════════════════════════════════════
+   SIDEBAR FIX — Force sidebar always visible
+   on all screen sizes / PCs
+   ════════════════════════════════════════════ */
+
+/* Force sidebar to always be visible and expanded */
 section[data-testid="stSidebar"] {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    min-width: 260px !important;
+    max-width: 320px !important;
+    width: 280px !important;
     background: var(--navy) !important;
-    border-right: none;
+    border-right: none !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
 }
 
+/* Prevent sidebar from being hidden by Streamlit's collapse mechanism */
+section[data-testid="stSidebar"][aria-expanded="false"] {
+    display: block !important;
+    visibility: visible !important;
+    width: 280px !important;
+    min-width: 260px !important;
+    transform: none !important;
+    margin-left: 0 !important;
+}
+
+/* Hide the collapse/toggle button so users can't accidentally hide it */
+button[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
+
+/* Ensure main content area still flows correctly next to fixed sidebar */
+[data-testid="stAppViewContainer"] > section:not([data-testid="stSidebar"]) {
+    margin-left: 0 !important;
+    padding-left: 1rem !important;
+}
+
+/* ── Sidebar Content Styles ── */
 section[data-testid="stSidebar"] * {
     color: #c8d8ef !important;
     font-family: 'DM Sans', sans-serif !important;
@@ -305,6 +342,42 @@ hr {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
 </style>
+""", unsafe_allow_html=True)
+
+
+# =========================================================
+# ---------------- SIDEBAR FORCE EXPAND (JS) ----------------
+# Force sidebar open via JS as a belt-and-suspenders fix
+# =========================================================
+st.markdown("""
+<script>
+(function() {
+    function forceOpenSidebar() {
+        // Find the sidebar toggle button and ensure sidebar is expanded
+        var sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+        if (sidebar) {
+            sidebar.setAttribute('aria-expanded', 'true');
+            sidebar.style.display = 'block';
+            sidebar.style.visibility = 'visible';
+            sidebar.style.width = '280px';
+            sidebar.style.minWidth = '260px';
+            sidebar.style.transform = 'none';
+        }
+        // Hide the collapse button
+        var collapseBtn = window.parent.document.querySelector('[data-testid="collapsedControl"]');
+        if (collapseBtn) collapseBtn.style.display = 'none';
+        var collapseBtn2 = window.parent.document.querySelector('[data-testid="stSidebarCollapseButton"]');
+        if (collapseBtn2) collapseBtn2.style.display = 'none';
+    }
+    // Run immediately and after DOM loads
+    forceOpenSidebar();
+    setTimeout(forceOpenSidebar, 500);
+    setTimeout(forceOpenSidebar, 1500);
+    // Also run on any DOM mutations
+    var observer = new MutationObserver(forceOpenSidebar);
+    observer.observe(window.parent.document.body, { childList: true, subtree: true, attributes: true });
+})();
+</script>
 """, unsafe_allow_html=True)
 
 
